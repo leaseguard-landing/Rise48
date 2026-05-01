@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DepositPro for Rise48 Equity</title>
+    <style>
+      :root {
+        --bg: #081b4b;
+        --card: rgba(255, 255, 255, 0.08);
+        --text: #f8fafc;
+        --muted: #cbd5e1;
+        --line: rgba(255, 255, 255, 0.12);
+        --gold: #f4c21c;
+        --gold-soft: rgba(244, 194, 28, 0.18);
+        --shadow: 0 20px 60px rgba(0, 0, 0, 0.24);
+        --radius-xl: 28px;
+        --radius-lg: 20px;
+        --max: 1240px;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(244, 194, 28, 0.12), transparent 26%),
+          radial-gradient(circle at 85% 10%, rgba(255, 255, 255, 0.06), transparent 24%),
+          linear-gradient(180deg, #091836 0%, var(--bg) 44%, #06153b 100%);
+      }
+
+      a { color: inherit; text-decoration: none; }
+      img { display: block; max-width: 100%; }
+      .shell { width: min(var(--max), calc(100% - 40px)); margin: 0 auto; }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(16px);
+        background: rgba(7, 20, 51, 0.95);
+        border-bottom: 1px solid var(--line);
+      }
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 16px 0;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        width: min(100%, 330px);
+      }
+      .brand img {
+        width: 100%;
+        max-width: 330px;
+        height: auto;
+        object-fit: contain;
+        background: transparent;
+      }
+      .mobile-top-nav { display: none; }
+
+      .intro-wrap { padding-top: 28px; }
+      .intro-card,
+      .card,
+      .summary-card,
+      .cta-card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius-xl);
+        background: var(--card);
+        box-shadow: var(--shadow);
+      }
+      .intro-card {
+        padding: 24px;
+        background: linear-gradient(180deg, rgba(244,194,28,0.16), rgba(255,255,255,0.04));
+      }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: #fde68a;
+        background: var(--gold-soft);
+        border: 1px solid rgba(244, 194, 28, 0.26);
+        border-radius: 999px;
+        padding: 10px 14px;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(30px, 4.8vw, 46px);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+      }
+      .lede {
+        margin-top: 12px;
+        font-size: 16px;
+        line-height: 1.75;
+        color: var(--muted);
+      }
+      .intro-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 20px;
+        margin-top: 18px;
+        align-items: stretch;
+      }
+      .intro-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .intro-side-card {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 22px;
+        background: rgba(7, 20, 51, 0.42);
+        padding: 18px;
+      }
+      .bce-logo-wrap {
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 18px;
+        background: rgba(255,255,255,0.04);
+        padding: 18px;
+      }
+      .bce-logo-wrap img {
+        width: 100%;
+        max-width: 420px;
+        margin: 0 auto;
+        height: auto;
+        object-fit: contain;
+      }
+      .intro-benefits {
+        display: grid;
+        gap: 12px;
+      }
+      .intro-benefit {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        color: var(--muted);
+        line-height: 1.7;
+        font-size: 15px;
+      }
+      .intro-benefit-mark {
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(244,194,28,0.14);
+        color: var(--gold);
+        font-size: 13px;
+        font-weight: 700;
+        flex: 0 0 auto;
+        margin-top: 2px;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 260px minmax(0, 1fr);
+        gap: 28px;
+        padding: 18px 0 56px;
+      }
+      .sidebar {
+        position: sticky;
+        top: 92px;
+        align-self: start;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-xl);
+        background: rgba(255,255,255,0.04);
+        padding: 14px;
+      }
+      .tab-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        border-radius: 16px;
+        padding: 14px 16px;
+        text-align: left;
+        font: inherit;
+        cursor: pointer;
+        transition: 180ms ease;
+      }
+      .tab-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
+      .tab-btn.active { background: rgba(244,194,28,0.15); color: #fff; }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.28);
+        flex: 0 0 auto;
+      }
+      .tab-btn.active .dot { background: var(--gold); }
+
+      .panel { display: none; }
+      .panel.active { display: block; }
+      .section-head { max-width: 900px; }
+      .section-kicker {
+        font-size: 12px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: #fde68a;
+      }
+      .section-title {
+        margin: 14px 0 0;
+        font-size: clamp(30px, 4vw, 44px);
+        letter-spacing: -0.03em;
+      }
+      .section-text {
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.8;
+      }
+      .stack-xxl > * + * { margin-top: 28px; }
+      .stack-lg > * + * { margin-top: 18px; }
+      .grid-2, .grid-3, .grid-4, .grid-5 { display: grid; gap: 18px; }
+      .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .grid-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      .card, .summary-card, .cta-card { padding: 26px; }
+      .card-title { margin: 0; font-size: 22px; }
+      .muted { color: var(--muted); line-height: 1.75; }
+      .metric-label { font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: #c7d2fe; }
+      .metric-value { margin-top: 12px; font-size: 34px; font-weight: 700; }
+      .metric-note { margin-top: 8px; font-size: 14px; color: var(--muted); line-height: 1.7; }
+      .bullet-list { display: grid; gap: 14px; }
+      .bullet { display: flex; gap: 12px; align-items: flex-start; color: var(--muted); line-height: 1.75; }
+      .bullet-icon {
+        width: 22px; height: 22px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
+        background: rgba(244,194,28,0.14); color: var(--gold); font-size: 13px; font-weight: 700; flex: 0 0 auto; margin-top: 2px;
+      }
+      .step-card {
+        display: flex; gap: 14px; align-items: flex-start; background: rgba(4,12,34,0.42);
+        border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 26px;
+      }
+      .step-index {
+        width: 34px; height: 34px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center;
+        background: rgba(244,194,28,0.14); color: #fde68a; font-weight: 700; flex: 0 0 auto;
+      }
+      .step-title { margin: 0; font-size: 19px; }
+      .step-text { margin-top: 8px; color: var(--muted); line-height: 1.75; }
+
+      .sequence-wrap {
+        display: grid;
+        gap: 18px;
+      }
+      .sequence-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 22px;
+        border: 1px solid rgba(244, 194, 28, 0.22);
+        border-radius: var(--radius-lg);
+        background: linear-gradient(180deg, rgba(244,194,28,0.14), rgba(255,255,255,0.04));
+      }
+      .sequence-label {
+        font-size: 12px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: #fde68a;
+      }
+      .sequence-line {
+        flex: 1 1 auto;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(244,194,28,0.35), rgba(255,255,255,0.08));
+      }
+      .sequence-subtext {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .sequence-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 20px;
+        align-items: stretch;
+      }
+      .sequence-card {
+        position: relative;
+        min-height: 100%;
+        padding: 28px;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(4,12,34,0.34));
+        box-shadow: var(--shadow);
+      }
+      .sequence-card:nth-child(1),
+      .sequence-card:nth-child(2),
+      .sequence-card:nth-child(3),
+      .sequence-card:nth-child(4),
+      .sequence-card:nth-child(5),
+      .sequence-card:nth-child(6) {
+        grid-column: span 2;
+      }
+
+      .sequence-step {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(244,194,28,0.14);
+        color: #fde68a;
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+      .sequence-title {
+        margin: 0;
+        font-size: 21px;
+        line-height: 1.25;
+      }
+      .sequence-text {
+        margin-top: 12px;
+        color: var(--muted);
+        line-height: 1.8;
+        font-size: 15px;
+      }
+
+      .phase-card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius-xl);
+        background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(4,12,34,0.34));
+        box-shadow: var(--shadow);
+        padding: 26px;
+      }
+      .phase-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #fde68a;
+        background: rgba(244,194,28,0.14);
+        border: 1px solid rgba(244,194,28,0.22);
+        border-radius: 999px;
+        padding: 8px 12px;
+      }
+      .phase-title {
+        margin: 14px 0 0;
+        font-size: 28px;
+        letter-spacing: -0.03em;
+      }
+      .phase-intro {
+        margin-top: 12px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .compare-card {
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(4,12,34,0.34));
+        padding: 24px;
+      }
+      .compare-card.highlight {
+        border-color: rgba(244,194,28,0.34);
+        background: linear-gradient(180deg, rgba(244,194,28,0.16), rgba(255,255,255,0.04));
+      }
+      .compare-title {
+        margin: 0;
+        font-size: 22px;
+      }
+      .compare-lines {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+      .compare-line {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .compare-line:last-child { border-bottom: 0; }
+      .compare-line strong { color: #fff; text-align: right; }
+      .benefit-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .benefit-card {
+        border: 1px solid rgba(244,194,28,0.22);
+        border-radius: 22px;
+        background: rgba(244,194,28,0.1);
+        padding: 22px;
+      }
+      .benefit-value {
+        font-size: 34px;
+        font-weight: 700;
+        margin-top: 10px;
+      }
+      .benefit-copy {
+        margin-top: 8px;
+        color: var(--muted);
+        line-height: 1.7;
+        font-size: 14px;
+      }
+
+      .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 18px; }
+      table { width: 100%; border-collapse: collapse; min-width: 640px; }
+      th, td { padding: 14px 16px; border-bottom: 1px solid var(--line); text-align: left; font-size: 14px; }
+      th { color: #fef3c7; background: rgba(255,255,255,0.05); font-weight: 600; }
+      tr:last-child td { border-bottom: 0; }
+      .bar-list { display: grid; gap: 14px; }
+      .bar-row-top { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; color: var(--muted); font-size: 14px; }
+      .bar-track { height: 12px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+      .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #f4c21c, #ffd84d); }
+      .cta-card { background: linear-gradient(180deg, rgba(244,194,28,0.2), rgba(255,255,255,0.05)); }
+      .cta-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 22px; }
+      .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 10px; border-radius: 999px; padding: 14px 20px; font-weight: 700; transition: 180ms ease;
+      }
+      .btn-primary { background: var(--gold); color: #18284f; }
+      .btn-secondary { border: 1px solid rgba(255,255,255,0.18); color: #fff; background: rgba(255,255,255,0.05); }
+      .contact-list { display: grid; gap: 12px; margin-top: 18px; }
+      .contact-person {
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 18px;
+        background: rgba(7,20,51,0.34);
+        padding: 16px 18px;
+      }
+      .contact-name { font-size: 18px; font-weight: 700; }
+      .contact-role { color: #fde68a; font-size: 13px; text-transform: uppercase; letter-spacing: 0.16em; margin-top: 4px; }
+      .contact-meta { margin-top: 10px; color: var(--muted); line-height: 1.8; }
+      .sanity { margin-bottom: 18px; border-radius: var(--radius-lg); border: 1px solid rgba(248,113,113,0.3); background: rgba(127,29,29,0.25); color: #fee2e2; padding: 18px 20px; display: none; }
+      .sanity.show { display: block; }
+
+      @media (max-width: 1080px) {
+        .intro-grid, .grid-4, .grid-5, .grid-3, .grid-2, .comparison-grid, .benefit-strip { grid-template-columns: 1fr; }
+
+        .sequence-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .sequence-card:nth-child(1),
+        .sequence-card:nth-child(2),
+        .sequence-card:nth-child(3),
+        .sequence-card:nth-child(4),
+        .sequence-card:nth-child(5),
+        .sequence-card:nth-child(6) {
+          grid-column: auto;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .shell { width: min(var(--max), calc(100% - 24px)); }
+        .card, .summary-card, .cta-card, .step-card, .sequence-card, .phase-card, .compare-card, .benefit-card { padding: 22px; }
+        .brand { width: min(100%, 260px); }
+        .brand img { max-width: 260px; }
+        h1 { font-size: 36px; }
+        .layout { grid-template-columns: 1fr; gap: 18px; }
+        #forecast .card .grid-4 { gap: 12px; }
+        .sidebar { display: none; }
+        .topbar.mobile-nav-mode .brand { display: none; }
+        .topbar.mobile-nav-mode .topbar-inner { display: block; padding: 10px 0; }
+        .topbar .mobile-top-nav { display: none; }
+        .topbar.mobile-nav-mode .mobile-top-nav {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 8px;
+        }
+        .topbar.mobile-nav-mode .mobile-top-nav .tab-btn {
+          width: 100%;
+          min-width: 0;
+          justify-content: center;
+          padding: 10px 6px;
+          text-align: center;
+          border-radius: 12px;
+          font-size: 12px;
+          line-height: 1.2;
+          gap: 0;
+          white-space: normal;
+        }
+        .topbar.mobile-nav-mode .mobile-top-nav .dot { display: none; }
+
+        .sequence-header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .sequence-line { display: none; }
+        .sequence-grid {
+          grid-template-columns: 1fr;
+        }
+        .compare-line { display: grid; gap: 4px; }
+        .compare-line strong { text-align: left; }
+
+        #forecast .table-wrap.forecast-table { overflow-x: visible; }
+        #forecast .table-wrap.forecast-table table,
+        #forecast .table-wrap.forecast-table thead,
+        #forecast .table-wrap.forecast-table tbody,
+        #forecast .table-wrap.forecast-table tr,
+        #forecast .table-wrap.forecast-table th,
+        #forecast .table-wrap.forecast-table td {
+          display: block;
+          width: 100%;
+          min-width: 0;
+        }
+        #forecast .table-wrap.forecast-table table { min-width: 0; }
+        #forecast .table-wrap.forecast-table thead {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+          clip-path: inset(50%);
+          white-space: nowrap;
+        }
+        #forecast .table-wrap.forecast-table tbody { display: grid; gap: 12px; padding: 12px; }
+        #forecast .table-wrap.forecast-table tr {
+          border: 1px solid var(--line);
+          border-radius: 14px;
+          background: rgba(255,255,255,0.04);
+          overflow: hidden;
+        }
+        #forecast .table-wrap.forecast-table td {
+          border-bottom: 1px solid var(--line);
+          padding: 10px 12px;
+          text-align: left;
+          font-size: 13px;
+        }
+        #forecast .table-wrap.forecast-table td:last-child { border-bottom: 0; }
+        #forecast .table-wrap.forecast-table td::before {
+          content: attr(data-label);
+          display: block;
+          font-size: 10px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: #c7d2fe;
+          margin-bottom: 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="https://www.leaseguard.com" target="_blank" rel="noreferrer">
+          <img src="./LeaseGuard-Master-RegFont-White-YellowHelm2.png" alt="LeaseGuard" />
+        </a>
+        <div class="mobile-top-nav" aria-label="Mobile section navigation">
+          <button class="tab-btn active" data-tab="overview" type="button"><span class="dot"></span><span>Overview</span></button>
+          <button class="tab-btn" data-tab="function" type="button"><span class="dot"></span><span>How It Functions</span></button>
+          <button class="tab-btn" data-tab="operations" type="button"><span class="dot"></span><span>Operational Rollout</span></button>
+          <button class="tab-btn" data-tab="example" type="button"><span class="dot"></span><span>Resident Example</span></button>
+          <button class="tab-btn" data-tab="forecast" type="button"><span class="dot"></span><span>NOI Forecast</span></button>
+          <button class="tab-btn" data-tab="connect" type="button"><span class="dot"></span><span>Next Steps</span></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="shell intro-wrap">
+      <div class="intro-card">
+        <div class="eyebrow">DepositPro for Rise48 Equity</div>
+        <div class="intro-grid">
+          <div class="intro-copy">
+            <h1>Reduce Resident Cost While Increasing Deposit Waiver Revenue</h1>
+            <p class="lede">A tailored overview of how DepositPro can replace Rise48 Equity’s current LeaseLock structure, support a cleaner resident-facing deposit waiver, and create a flexible path toward a future CaptivePro structure.</p>
+          </div>
+          <div class="intro-side-card">
+            <div class="bce-logo-wrap">
+              <img src="./Rise48-Equity-logo.png" alt="Rise48 Equity" />
+            </div>
+            <div class="intro-benefits">
+              <div class="intro-benefit"><span class="intro-benefit-mark">✓</span><span>11,500-unit DepositPro opportunity across 56 market-rate multifamily communities.</span></div>
+              <div class="intro-benefit"><span class="intro-benefit-mark">✓</span><span>Designed to integrate with Entrata, where LeaseGuard already has an active integration path.</span></div>
+              <div class="intro-benefit"><span class="intro-benefit-mark">✓</span><span>Modeled to reduce resident cost while increasing Rise48’s retained monthly revenue per participating unit.</span></div>
+              <div class="intro-benefit"><span class="intro-benefit-mark">✓</span><span>Optional CaptivePro planning path once sufficient performance and loss data has developed.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shell"><div id="sanity" class="sanity"></div></div>
+
+    <section class="shell layout">
+      <aside class="sidebar">
+        <button class="tab-btn active" data-tab="overview" type="button"><span class="dot"></span><span>Overview</span></button>
+        <button class="tab-btn" data-tab="function" type="button"><span class="dot"></span><span>How It Functions</span></button>
+        <button class="tab-btn" data-tab="operations" type="button"><span class="dot"></span><span>Operational Rollout</span></button>
+        <button class="tab-btn" data-tab="example" type="button"><span class="dot"></span><span>Resident Example</span></button>
+        <button class="tab-btn" data-tab="forecast" type="button"><span class="dot"></span><span>NOI Forecast</span></button>
+        <button class="tab-btn" data-tab="connect" type="button"><span class="dot"></span><span>Next Steps</span></button>
+      </aside>
+
+      <main>
+        <section id="overview" class="panel active stack-xxl"></section>
+        <section id="function" class="panel stack-xxl"></section>
+        <section id="operations" class="panel stack-xxl"></section>
+        <section id="example" class="panel stack-xxl"></section>
+        <section id="forecast" class="panel stack-xxl"></section>
+        <section id="connect" class="panel stack-xxl"></section>
+      </main>
+    </section>
+
+    <script>
+      const portfolioUnits = 11500;
+      const steadyStateAdoption = 0.52;
+      const steadyStateUnitsOnWaiver = portfolioUnits * steadyStateAdoption;
+      const coveragePerUnit = 1250;
+      const leaseLockRate = 49;
+      const currentRise48Markup = 3;
+      const currentResidentFee = leaseLockRate + currentRise48Markup;
+      const leaseGuardRate = 30;
+      const adminFee = 10;
+      const residentFee = leaseGuardRate + adminFee;
+      const productSavings = leaseLockRate - leaseGuardRate;
+      const residentSavings = currentResidentFee - residentFee;
+      const revenueIncrease = adminFee - currentRise48Markup;
+
+      const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+      const percent = new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 0 });
+
+      const months = Array.from({ length: 24 }, (_, i) => {
+        const month = i + 1;
+        const enrolledUnits = Math.round((steadyStateUnitsOnWaiver / 24) * month);
+        return {
+          month,
+          label: `M${month}`,
+          enrolledUnits,
+          monthlyNoi: enrolledUnits * adminFee,
+          monthlyLeaseGuardPremium: enrolledUnits * leaseGuardRate,
+          monthlyResidentFeesCollected: enrolledUnits * residentFee,
+        };
+      });
+
+      function sum(arr, key) { return arr.reduce((acc, item) => acc + item[key], 0); }
+
+      const quarterData = [
+        { quarter: 'Y1 Q1', months: months.slice(0, 3) },
+        { quarter: 'Y1 Q2', months: months.slice(3, 6) },
+        { quarter: 'Y1 Q3', months: months.slice(6, 9) },
+        { quarter: 'Y1 Q4', months: months.slice(9, 12) },
+        { quarter: 'Y2 Q1', months: months.slice(12, 15) },
+        { quarter: 'Y2 Q2', months: months.slice(15, 18) },
+        { quarter: 'Y2 Q3', months: months.slice(18, 21) },
+        { quarter: 'Y2 Q4', months: months.slice(21, 24) },
+      ].map((q) => ({ quarter: q.quarter, enrolledUnitsEnd: q.months[q.months.length - 1].enrolledUnits, noi: sum(q.months, 'monthlyNoi') }));
+
+      const year1Months = months.slice(0, 12);
+      const year2Months = months.slice(12, 24);
+      const yearSummary = [
+        { year: 'Year 1', enrolledUnitsEnd: year1Months[11].enrolledUnits, averageEnrolledUnits: Math.round(sum(year1Months, 'enrolledUnits') / 12), noi: sum(year1Months, 'monthlyNoi') },
+        { year: 'Year 2', enrolledUnitsEnd: year2Months[11].enrolledUnits, averageEnrolledUnits: Math.round(sum(year2Months, 'enrolledUnits') / 12), noi: sum(year2Months, 'monthlyNoi') },
+        { year: 'Steady State Run Rate', enrolledUnitsEnd: steadyStateUnitsOnWaiver, averageEnrolledUnits: steadyStateUnitsOnWaiver, noi: steadyStateUnitsOnWaiver * adminFee * 12 },
+      ];
+
+      function runSanityChecks() {
+        const errors = [];
+        if (portfolioUnits !== 11500) errors.push('Portfolio units should equal 11,500.');
+        if (coveragePerUnit !== 1250) errors.push('Coverage per unit should equal $1,250 in the example.');
+        if (months.length !== 24) errors.push('Expected 24 months of forecast data.');
+        if (quarterData.length !== 8) errors.push('Expected 8 quarters of forecast data.');
+        if (months[23].enrolledUnits !== steadyStateUnitsOnWaiver) errors.push('Month 24 should equal steady-state covered units.');
+        if (residentFee !== 40) errors.push('Resident fee should equal $40 in the illustrative example.');
+        if (yearSummary[2].noi !== steadyStateUnitsOnWaiver * adminFee * 12) errors.push('Steady-state annual NOI is miscalculated.');
+        return errors;
+      }
+
+      function sectionHead(kicker, title, text) {
+        return `<div class="section-head"><div class="section-kicker">${kicker}</div><h2 class="section-title">${title}</h2><div class="section-text">${text}</div></div>`;
+      }
+      function card(title, body) {
+        return `<div class="card"><h3 class="card-title">${title}</h3><div class="muted" style="margin-top:12px;">${body}</div></div>`;
+      }
+      function bulletList(items) {
+        return `<div class="bullet-list">${items.map((item) => `<div class="bullet"><span class="bullet-icon">✓</span><span>${item}</span></div>`).join('')}</div>`;
+      }
+      function steps(items) {
+        return items.map((item, idx) => `<div class="step-card"><div class="step-index">${idx + 1}</div><div><h3 class="step-title">${item.title}</h3><div class="step-text">${item.text}</div></div></div>`).join('');
+      }
+      function metricCard(label, value, note) {
+        return `<div class="summary-card"><div class="metric-label">${label}</div><div class="metric-value">${value}</div><div class="metric-note">${note}</div></div>`;
+      }
+      function sequenceCards(items) {
+        return `
+          <div class="sequence-wrap">
+            <div class="sequence-header">
+              <div class="sequence-label">6-Step Sequence</div>
+              <div class="sequence-line"></div>
+              <div class="sequence-subtext">Starts with the lease deposit requirement and ends with unit protection, claims handling, and a cleaner resident experience.</div>
+            </div>
+            <div class="sequence-grid">
+              ${items.map((item, idx) => `
+                <div class="sequence-card">
+                  <div class="sequence-step">${idx + 1}</div>
+                  <h3 class="sequence-title">${item.title}</h3>
+                  <div class="sequence-text">${item.text}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+      function comparisonLine(label, value) {
+        return `<div class="compare-line"><span>${label}</span><strong>${value}</strong></div>`;
+      }
+
+      function renderOverview() {
+        const fullAnnualNoi = steadyStateUnitsOnWaiver * adminFee * 12;
+        document.getElementById('overview').innerHTML = `
+          ${sectionHead('DepositPro for Rise48 Equity', 'DepositPro Overview for Rise48 Equity', 'DepositPro allows a resident to satisfy the lease’s deposit requirement without bringing a full cash security deposit at move-in. For Rise48 Equity, the primary opportunity is replacing the current LeaseLock structure with a more flexible DepositPro model that can reduce resident cost, increase retained revenue, and create a future path toward CaptivePro once performance data supports that decision.')}
+          <div class="grid-4">
+            ${metricCard('Coverage structure', '$1,250', 'Modeled at the current flat coverage amount, with flexibility to structure tiers up to 2x monthly rent.')}
+            ${metricCard('Estimated rate', '$30/mo', 'Estimated DepositPro rate for the current $1,250 coverage limit.')}
+            ${metricCard('Resident waiver fee', '$40/mo', '$30 LeaseGuard premium plus a $10 monthly administration fee retained by Rise48.')}
+            ${metricCard('Full annual NOI', currency.format(fullAnnualNoi), 'Assumes 52% steady-state adoption across 11,500 units.')}
+          </div>
+          <div class="grid-2">
+            ${card('Why this matters for Rise48 Equity', `<div class="stack-lg"><div>Rise48 Equity owns and operates 11,500 market-rate multifamily units across 56 communities in Arizona, North Carolina, and Texas. Because Rise48 is both the owner and operator, DepositPro can be evaluated as a resident affordability tool, an operational replacement for LeaseLock, and a direct recurring revenue opportunity.</div><div>Rise48 is currently offering a flat $1,250 LeaseLock coverage amount at a $49 monthly cost, with a $3 markup retained by Rise48. DepositPro can model the same $1,250 coverage amount at an estimated $30 monthly LeaseGuard rate, creating room to reduce the resident-facing monthly fee while increasing Rise48’s retained monthly revenue per participating unit.</div><div>LeaseGuard also has an active Entrata integration path, which helps support implementation, reporting, coverage placement, invoicing, and ongoing portfolio administration through a more scalable operating process.</div></div>`) }
+            <div class="card" style="background:linear-gradient(180deg, rgba(244,194,28,0.18), rgba(255,255,255,0.04));"><h3 class="card-title">How DepositPro is different</h3><div style="margin-top:14px;">${bulletList([
+              'Once a partnership is agreed upon, all residents of Rise48 Equity qualify to opt into DepositPro. LeaseGuard underwrites Rise48 at the portfolio level instead of underwriting each resident individually.',
+              'Rise48 can keep a flat $1,250 coverage structure or use tiered coverage amounts based on resident screening outcomes, including coverage options up to 2x monthly rent.',
+              'Leasing teams can offer DepositPro as a lower-friction move-in option while maintaining a traditional cash security deposit option for residents who do not elect the waiver.',
+              'The structure supports a future CaptivePro path by allowing Rise48 to build performance and loss history before deciding whether to assume more risk in a single parent captive.',
+              'Dedicated claims handling support and portfolio-level reporting help create a cleaner operating process than managing deposit waivers community by community.'
+            ])}</div></div>
+          </div>
+          <div class="card">
+            <h3 class="card-title">LeaseLock vs. LeaseGuard at the current $1,250 coverage amount</h3>
+            <p class="muted" style="margin-top:14px;">The side-by-side below uses Rise48’s current $1,250 coverage limit and compares the current LeaseLock structure to a modeled LeaseGuard DepositPro structure.</p>
+            <div class="comparison-grid" style="margin-top:18px;">
+              <div class="compare-card">
+                <h3 class="compare-title">Current LeaseLock Structure</h3>
+                <div class="compare-lines">
+                  ${comparisonLine('Coverage limit', currency.format(coveragePerUnit))}
+                  ${comparisonLine('LeaseLock monthly cost', currency.format(leaseLockRate))}
+                  ${comparisonLine('Rise48 monthly markup', currency.format(currentRise48Markup))}
+                  ${comparisonLine('Resident monthly cost', currency.format(currentResidentFee))}
+                </div>
+              </div>
+              <div class="compare-card highlight">
+                <h3 class="compare-title">LeaseGuard DepositPro Structure</h3>
+                <div class="compare-lines">
+                  ${comparisonLine('Coverage limit', currency.format(coveragePerUnit))}
+                  ${comparisonLine('LeaseGuard monthly rate', currency.format(leaseGuardRate))}
+                  ${comparisonLine('Rise48 monthly admin fee', currency.format(adminFee))}
+                  ${comparisonLine('Resident monthly waiver fee', currency.format(residentFee))}
+                </div>
+              </div>
+            </div>
+            <div class="benefit-strip" style="margin-top:18px;">
+              <div class="benefit-card"><div class="metric-label">Product cost reduction</div><div class="benefit-value">${currency.format(productSavings)}</div><div class="benefit-copy">Monthly savings per participating unit from $49 to $30 at the same $1,250 coverage amount.</div></div>
+              <div class="benefit-card"><div class="metric-label">Resident savings</div><div class="benefit-value">${currency.format(residentSavings)}</div><div class="benefit-copy">Modeled resident-facing cost reduction from $52 to $40, which supports passing at least $9 of savings back to the resident.</div></div>
+              <div class="benefit-card"><div class="metric-label">Rise48 revenue increase</div><div class="benefit-value">+${currency.format(revenueIncrease)}</div><div class="benefit-copy">Monthly retained revenue increases from $3 to $10 per participating unit.</div></div>
+            </div>
+          </div>
+          <div class="grid-2">
+            ${card('CaptivePro planning path', `<div class="stack-lg"><div>Rise48 does not need to move directly into a single parent captive on day one. LeaseGuard can first deploy DepositPro under the standard structure while Rise48 develops credible program performance and historical loss data.</div><div>After one to two years, or sooner if the data supports it, Rise48 can evaluate a CaptivePro transition with clearer visibility into upfront capital requirements, expected revenue, loss assumptions, and downside risk.</div></div>`)}
+            ${card('Tiered coverage flexibility', `<div class="stack-lg"><div>Rise48 can maintain the current flat $1,250 coverage amount across participating residents or create tiered coverage amounts based on screening outcomes.</div><div>For example, residents who qualify but present more risk can be offered a higher coverage tier through DepositPro or can choose to provide a higher traditional cash security deposit.</div></div>`)}
+          </div>`;
+      }
+
+      function renderFunction() {
+        document.getElementById('function').innerHTML = `
+          ${sectionHead('How the product functions', 'How DepositPro Replaces Deposits', 'The resident still must satisfy the lease’s deposit requirement. DepositPro changes how that requirement is satisfied. Instead of bringing the full cash deposit at move-in, the resident can elect a non-refundable monthly deposit waiver fee and sign the related lease addendum. Once that happens, LeaseGuard places an insurance policy in place of the cash deposit.')}
+          ${sequenceCards([
+            { title: 'Deposit requirement remains in place', text: 'The community still requires a traditional security deposit under the lease unless the resident elects the approved DepositPro waiver option.' },
+            { title: 'Resident is offered a move-in choice', text: 'At leasing, the resident is offered two paths: pay the full cash deposit or satisfy that same lease requirement through the approved non-refundable monthly waiver structure.' },
+            { title: 'Lease addendum is executed', text: 'If the resident elects DepositPro, the resident signs the LeaseGuard lease addendum documenting that the deposit requirement is being satisfied through the waiver structure.' },
+            { title: 'Insurance replaces the cash deposit', text: 'LeaseGuard places insurance on the unit in lieu of the cash security deposit, creating a true deposit replacement structure rather than a bond-style product.' },
+            { title: 'Ledger posting, reporting, and invoicing follow', text: 'The recurring waiver fee is posted to the resident ledger, LeaseGuard captures the activity through Entrata reporting, and the community is invoiced in arrears.' },
+            { title: 'Unit protection and fast claims handling follow', text: 'Coverage is structured to follow applicable municipal security deposit laws, and when a claim arises it can be handled quickly without resident involvement over a cash deposit, reducing friction at move-out while protecting the unit.' }
+          ])}`;
+      }
+
+      function renderOperations() {
+        document.getElementById('operations').innerHTML = `
+          ${sectionHead('Operational clarity', 'How LeaseGuard Supports Rise48’s Rollout', 'LeaseGuard works directly with Rise48 through two clear phases: an onboarding phase prior to launch and an active phase once communities begin offering DepositPro at leasing and renewal.')}
+          <div class="grid-2">
+            <div class="phase-card">
+              <div class="phase-label">Phase One</div>
+              <h3 class="phase-title">Onboarding Phase</h3>
+              <div class="phase-intro">Before go-live, your dedicated Partner Support Manager coordinates setup, documents the workflow, and prepares each community team to launch consistently.</div>
+              <div class="stack-lg" style="margin-top:18px;">
+                ${steps([
+                  { title: 'Coordinate Entrata setup and documents', text: 'Your dedicated Partner Support Manager coordinates the Entrata workflow, establishes ledger charges, aligns property-level reporting, and deploys the LeaseGuard lease addendum.' },
+                  { title: 'Define transition approach from LeaseLock', text: 'Existing residents already on LeaseLock can remain on LeaseLock until lease renewal, then elect LeaseGuard DepositPro at renewal if they wish.' },
+                  { title: 'Train on-site staff', text: 'Prior to the agreed go-live date, your dedicated Partner Support Manager trains on-site staff so teams understand how to present the waiver option, explain the resident choice, and apply the correct ledger charge.' }
+                ])}
+              </div>
+            </div>
+            <div class="phase-card">
+              <div class="phase-label">Phase Two</div>
+              <h3 class="phase-title">Active Phase</h3>
+              <div class="phase-intro">Once live, communities begin using the approved process in leasing while LeaseGuard manages monthly reporting, coverage placement, invoicing, and ongoing support.</div>
+              <div class="stack-lg" style="margin-top:18px;">
+                ${steps([
+                  { title: 'Communities begin offering DepositPro', text: 'At the agreed go-live date, leasing agents begin offering residents the ability to waive the cash deposit requirement, attach the lease addendum to new and renewal leases, and post recurring charges.' },
+                  { title: 'Renewals become the clean transition point', text: 'Existing LeaseLock residents are not forced into an immediate change. The transition happens naturally at renewal, where residents can choose the LeaseGuard waiver structure or provide the applicable cash deposit.' },
+                  { title: 'LeaseGuard reports and invoices monthly', text: 'LeaseGuard runs monthly reports to identify participating units for coverage placement and invoicing.' },
+                  { title: 'Ongoing community support follows', text: 'LeaseGuard provides ongoing support to on-site communities after launch to help maintain clean execution across the portfolio.' }
+                ])}
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function renderExample() {
+        document.getElementById('example').innerHTML = `
+          ${sectionHead('Hypothetical resident example', 'What this looks like at the unit level', 'This example reflects the requested structure: a resident at a Rise48 community is required to provide a $1,250 cash security deposit, the LeaseGuard DepositPro rate is $30 per month for $1,250 of coverage, and the community applies a $10 monthly administration fee.')}
+          <div class="grid-2">
+            <div class="stack-lg">${steps([
+              { title: 'Choice at leasing', text: 'The leasing agent offers the resident two options: pay the full $1,250 cash security deposit or keep that cash available and satisfy the deposit requirement through a non-refundable $40 monthly waiver fee.' },
+              { title: 'Resident elects the waiver', text: 'The resident chooses the DepositPro option and signs the lease addendum electing the waiver structure.' },
+              { title: 'Recurring fee is posted', text: 'The leasing agent places the $40 waiver fee on the resident ledger as a recurring monthly charge paid alongside rent.' },
+              { title: 'Coverage and invoicing follow', text: 'LeaseGuard identifies that ledger charge through monthly reporting, adds insurance coverage to the unit, and invoices the community accordingly.' },
+              { title: 'Community retains the spread', text: 'The community collects $40, remits $30 to LeaseGuard, and retains the $10 administration fee.' }
+            ])}</div>
+            <div class="grid-2">${metricCard('Cash deposit requirement', '$1,250', 'Traditional deposit obligation under the lease.')}${metricCard('LeaseGuard rate', '$30 / month', 'Insurance cost per covered unit at $1,250 of coverage.')}${metricCard('Community admin fee', '$10 / month', 'Monthly administration fee retained by Rise48.')}${metricCard('Resident waiver fee', '$40 / month', 'Non-refundable monthly fee paid by the resident instead of bringing the full cash deposit upfront.')}</div>
+          </div>
+          <div class="cta-card"><h3 class="card-title">Why this resonates with residents and operators</h3><p class="muted" style="margin-top:14px;">The resident keeps $1,250 available at move-in instead of tying it up in a traditional deposit, while Rise48 gains an insurance-backed replacement structure that can reduce deposit-related friction, support move-in affordability, and increase retained monthly revenue per participating unit.</p></div>`;
+      }
+
+      function renderForecast() {
+        const fullMonthlyNoi = steadyStateUnitsOnWaiver * adminFee;
+        const fullQuarterlyNoi = fullMonthlyNoi * 3;
+        const fullAnnualNoi = fullMonthlyNoi * 12;
+        const maxQuarterNoi = Math.max(...quarterData.map((item) => item.noi));
+
+        document.getElementById('forecast').innerHTML = `
+          ${sectionHead('NOI forecast', 'Rise48 Administrative Fee Forecast', 'This forecast assumes a 52% steady-state adoption rate, a $10 monthly administration fee per covered unit, and a gradual 24-month rollout because the program is expected to come on through new leases and renewal leases only. Month 24 reflects full steady-state adoption.')}
+          <div class="grid-4">${metricCard('Portfolio units', portfolioUnits.toLocaleString(), 'Rise48 portfolio size used for this forecast.')}${metricCard('Steady-state adoption', percent.format(steadyStateAdoption), `${steadyStateUnitsOnWaiver.toLocaleString()} units projected on waiver at full maturity.`)}${metricCard('Full monthly NOI', currency.format(fullMonthlyNoi), 'At full steady-state adoption.')}${metricCard('Full annual NOI', currency.format(fullAnnualNoi), 'At full steady-state adoption.')}</div>
+          <div class="card"><h3 class="card-title">24-month rollout summary</h3><div class="grid-4" style="margin-top:18px;">${[
+            { label: 'Month 1', value: currency.format(months[0].monthlyNoi), note: `${months[0].enrolledUnits.toLocaleString()} covered units` },
+            { label: 'Month 6', value: currency.format(months[5].monthlyNoi), note: `${months[5].enrolledUnits.toLocaleString()} covered units` },
+            { label: 'Month 12', value: currency.format(months[11].monthlyNoi), note: `${months[11].enrolledUnits.toLocaleString()} covered units` },
+            { label: 'Month 24', value: currency.format(months[23].monthlyNoi), note: `${months[23].enrolledUnits.toLocaleString()} covered units` }
+          ].map((item) => metricCard(item.label, item.value, item.note)).join('')}</div><p class="muted" style="margin-top:18px;">This illustrative ramp assumes the program builds gradually through new leases and renewal leases only, reaching the full modeled 52% adoption rate by month 24.</p></div>
+          <div class="grid-2">
+            <div class="card"><h3 class="card-title">Quarterly NOI build</h3><div class="bar-list" style="margin-top:18px;">${quarterData.map((item) => `<div><div class="bar-row-top"><span>${item.quarter}</span><span>${currency.format(item.noi)}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(item.noi / maxQuarterNoi) * 100}%"></div></div></div>`).join('')}</div></div>
+            <div class="card"><h3 class="card-title">Annual summary</h3><div class="table-wrap forecast-table" style="margin-top:18px;"><table><thead><tr><th>Period</th><th>End Units on Waiver</th><th>Avg Units on Waiver</th><th>NOI</th></tr></thead><tbody>${yearSummary.map((row) => `<tr><td data-label="Period">${row.year}</td><td data-label="End Units on Waiver">${row.enrolledUnitsEnd.toLocaleString()}</td><td data-label="Avg Units on Waiver">${row.averageEnrolledUnits.toLocaleString()}</td><td data-label="NOI">${currency.format(row.noi)}</td></tr>`).join('')}</tbody></table></div></div>
+          </div>
+          <div class="cta-card"><h3 class="card-title">Key forecast outputs</h3><div class="grid-3" style="margin-top:18px;">${card('Year 1', `${currency.format(yearSummary[0].noi)} projected NOI during the initial slower ramp.`)}${card('Year 2', `${currency.format(yearSummary[1].noi)} projected NOI as the portfolio grows into full adoption.`)}${card('Steady state', `${currency.format(fullMonthlyNoi)} per month, ${currency.format(fullQuarterlyNoi)} per quarter, and ${currency.format(fullAnnualNoi)} per year.`)}</div></div>`;
+      }
+
+      function renderConnect() {
+        document.getElementById('connect').innerHTML = `
+          ${sectionHead('Next steps', 'Review the CaptivePro Proforma and Formal DepositPro Proposal', 'The most productive next conversation is a working session with Blake and the Rise48 team to review the formal DepositPro proposal, walk through the LeaseLock-to-LeaseGuard economics, and evaluate a CaptivePro proforma for a potential single parent captive structure.')}
+          <div class="cta-card"><h3 class="card-title">Next Steps</h3><p class="muted" style="margin-top:14px;">Schedule time to review the CaptivePro proforma and formal DepositPro proposal. This session can address final coverage structure, flat versus tiered coverage options, resident-facing pricing, Entrata rollout requirements, renewal transition timing, and the potential path from standard DepositPro placement into a future captive structure.</p><div class="contact-list"><div class="contact-person"><div class="contact-name">Chris Taylor</div><div class="contact-role">LeaseGuard</div><div class="contact-meta"><div><a href="tel:8016102786">801.610.2786</a></div><div><a href="https://calendly.com/ctaylor-76/30min" target="_blank" rel="noreferrer">calendly.com/ctaylor-76/30min</a></div></div></div></div><div class="cta-actions"><a class="btn btn-primary" href="https://calendly.com/ctaylor-76/30min" target="_blank" rel="noreferrer">Schedule Proposal Review</a><a class="btn btn-secondary" href="tel:8016102786">Call Chris</a></div></div>`;
+      }
+
+      function initTabs() {
+        const buttons = Array.from(document.querySelectorAll('.tab-btn'));
+        const panels = Array.from(document.querySelectorAll('.panel'));
+        const main = document.querySelector('main');
+        const topbar = document.querySelector('.topbar');
+
+        function activate(tab) {
+          buttons.forEach((btn) => btn.classList.toggle('active', btn.dataset.tab === tab));
+          panels.forEach((panel) => panel.classList.toggle('active', panel.id === tab));
+          if (main) {
+            const offset = window.innerWidth <= 640 ? 96 : 88;
+            const top = main.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top, behavior: 'smooth' });
+          }
+        }
+
+        function syncMobileHeader() {
+          if (!topbar) return;
+          if (window.innerWidth > 640) {
+            topbar.classList.remove('mobile-nav-mode');
+            return;
+          }
+          if (window.scrollY > 110) topbar.classList.add('mobile-nav-mode');
+          else topbar.classList.remove('mobile-nav-mode');
+        }
+
+        buttons.forEach((btn) => btn.addEventListener('click', () => activate(btn.dataset.tab)));
+        window.addEventListener('scroll', syncMobileHeader, { passive: true });
+        window.addEventListener('resize', syncMobileHeader);
+        syncMobileHeader();
+      }
+
+      function initSanity() {
+        const errors = runSanityChecks();
+        if (!errors.length) return;
+        const box = document.getElementById('sanity');
+        box.classList.add('show');
+        box.innerHTML = `<strong>Forecast sanity checks failed</strong><ul>${errors.map((e) => `<li>${e}</li>`).join('')}</ul>`;
+      }
+
+      function init() {
+        renderOverview();
+        renderFunction();
+        renderOperations();
+        renderExample();
+        renderForecast();
+        renderConnect();
+        initTabs();
+        initSanity();
+      }
+      init();
+    </script>
+  </body>
+</html>
