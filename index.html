@@ -589,8 +589,8 @@
             <div class="intro-benefits">
               <div class="intro-benefit"><span class="intro-benefit-mark">✓</span><span>11,500-unit DepositPro opportunity across 56 market-rate multifamily communities.</span></div>
               <div class="intro-benefit"><span class="intro-benefit-mark">✓</span><span>Designed to integrate with Entrata, where LeaseGuard already has an active integration path.</span></div>
-              <div class="intro-benefit"><span class="intro-benefit-mark">✓</span><span>Modeled to reduce resident cost while increasing Rise48’s retained monthly revenue per participating unit.</span></div>
-              <div class="intro-benefit"><span class="intro-benefit-mark">✓</span><span>Optional CaptivePro planning path once sufficient performance and loss data has developed.</span></div>
+              <div class="intro-benefit"><span class="intro-benefit-mark">✓</span><span>Modeled to reduce resident cost by $11 per month, a 22% decrease, creating approximately $789,360 in annual resident savings at 52% adoption.</span></div>
+              <div class="intro-benefit"><span class="intro-benefit-mark">✓</span><span>Optional CaptivePro planning path, with the standard structure increasing modeled annual NOI by $574,080, a 400% increase, before any captive upside.</span></div>
             </div>
           </div>
         </div>
@@ -625,7 +625,7 @@
       const steadyStateUnitsOnWaiver = portfolioUnits * steadyStateAdoption;
       const coveragePerUnit = 1250;
       const leaseLockRate = 49;
-      const currentRise48Markup = 3;
+      const currentRise48Markup = 2;
       const currentResidentFee = leaseLockRate + currentRise48Markup;
       const leaseGuardRate = 30;
       const adminFee = 10;
@@ -633,6 +633,14 @@
       const productSavings = leaseLockRate - leaseGuardRate;
       const residentSavings = currentResidentFee - residentFee;
       const revenueIncrease = adminFee - currentRise48Markup;
+      const productCostReductionPercent = productSavings / leaseLockRate;
+      const residentSavingsPercent = residentSavings / currentResidentFee;
+      const annualResidentSavingsPerResident = residentSavings * 12;
+      const annualResidentSavings = steadyStateUnitsOnWaiver * residentSavings * 12;
+      const currentAnnualNoi = steadyStateUnitsOnWaiver * currentRise48Markup * 12;
+      const modeledAnnualNoi = steadyStateUnitsOnWaiver * adminFee * 12;
+      const annualNoiIncrease = modeledAnnualNoi - currentAnnualNoi;
+      const retainedRevenueIncreasePercent = revenueIncrease / currentRise48Markup;
 
       const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
       const percent = new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 0 });
@@ -732,16 +740,6 @@
             ${metricCard('Resident waiver fee', '$40/mo', '$30 LeaseGuard premium plus a $10 monthly administration fee retained by Rise48.')}
             ${metricCard('Full annual NOI', currency.format(fullAnnualNoi), 'Assumes 52% steady-state adoption across 11,500 units.')}
           </div>
-          <div class="grid-2">
-            ${card('Why this matters for Rise48 Equity', `<div class="stack-lg"><div>Rise48 Equity owns and operates 11,500 market-rate multifamily units across 56 communities in Arizona, North Carolina, and Texas. Because Rise48 is both the owner and operator, DepositPro can be evaluated as a resident affordability tool, an operational replacement for LeaseLock, and a direct recurring revenue opportunity.</div><div>Rise48 is currently offering a flat $1,250 LeaseLock coverage amount at a $49 monthly cost, with a $3 markup retained by Rise48. DepositPro can model the same $1,250 coverage amount at an estimated $30 monthly LeaseGuard rate, creating room to reduce the resident-facing monthly fee while increasing Rise48’s retained monthly revenue per participating unit.</div><div>LeaseGuard also has an active Entrata integration path, which helps support implementation, reporting, coverage placement, invoicing, and ongoing portfolio administration through a more scalable operating process.</div></div>`) }
-            <div class="card" style="background:linear-gradient(180deg, rgba(244,194,28,0.18), rgba(255,255,255,0.04));"><h3 class="card-title">How DepositPro is different</h3><div style="margin-top:14px;">${bulletList([
-              'Once a partnership is agreed upon, all residents of Rise48 Equity qualify to opt into DepositPro. LeaseGuard underwrites Rise48 at the portfolio level instead of underwriting each resident individually.',
-              'Rise48 can keep a flat $1,250 coverage structure or use tiered coverage amounts based on resident screening outcomes, including coverage options up to 2x monthly rent.',
-              'Leasing teams can offer DepositPro as a lower-friction move-in option while maintaining a traditional cash security deposit option for residents who do not elect the waiver.',
-              'The structure supports a future CaptivePro path by allowing Rise48 to build performance and loss history before deciding whether to assume more risk in a single parent captive.',
-              'Dedicated claims handling support and portfolio-level reporting help create a cleaner operating process than managing deposit waivers community by community.'
-            ])}</div></div>
-          </div>
           <div class="card">
             <h3 class="card-title">LeaseLock vs. LeaseGuard at the current $1,250 coverage amount</h3>
             <p class="muted" style="margin-top:14px;">The side-by-side below uses Rise48’s current $1,250 coverage limit and compares the current LeaseLock structure to a modeled LeaseGuard DepositPro structure.</p>
@@ -766,16 +764,30 @@
               </div>
             </div>
             <div class="benefit-strip" style="margin-top:18px;">
-              <div class="benefit-card"><div class="metric-label">Product cost reduction</div><div class="benefit-value">${currency.format(productSavings)}</div><div class="benefit-copy">Monthly savings per participating unit from $49 to $30 at the same $1,250 coverage amount.</div></div>
-              <div class="benefit-card"><div class="metric-label">Resident savings</div><div class="benefit-value">${currency.format(residentSavings)}</div><div class="benefit-copy">Modeled resident-facing cost reduction from $52 to $40, which supports passing at least $9 of savings back to the resident.</div></div>
-              <div class="benefit-card"><div class="metric-label">Rise48 revenue increase</div><div class="benefit-value">+${currency.format(revenueIncrease)}</div><div class="benefit-copy">Monthly retained revenue increases from $3 to $10 per participating unit.</div></div>
+              <div class="benefit-card"><div class="metric-label">Product cost reduction</div><div class="benefit-value">${currency.format(productSavings)} / ${percent.format(productCostReductionPercent)}</div><div class="benefit-copy">Monthly savings per participating unit from $49 to $30 at the same $1,250 coverage amount, a ${percent.format(productCostReductionPercent)} decrease.</div></div>
+              <div class="benefit-card"><div class="metric-label">Resident savings</div><div class="benefit-value">${currency.format(residentSavings)} / ${percent.format(residentSavingsPercent)}</div><div class="benefit-copy">Modeled resident-facing cost reduction from $51 to $40 per participating unit, a ${percent.format(residentSavingsPercent)} decrease.</div></div>
+              <div class="benefit-card"><div class="metric-label">Rise48 revenue increase</div><div class="benefit-value">+${currency.format(revenueIncrease)} / +${percent.format(retainedRevenueIncreasePercent)}</div><div class="benefit-copy">Monthly retained revenue increases from $2 to $10 per participating unit, a ${percent.format(retainedRevenueIncreasePercent)} increase.</div></div>
+              <div class="benefit-card"><div class="metric-label">Annual resident savings</div><div class="benefit-value">${currency.format(annualResidentSavings)} / ${percent.format(residentSavingsPercent)}</div><div class="benefit-copy">At 52% adoption, the $11 monthly savings creates this modeled annual resident benefit, a ${percent.format(residentSavingsPercent)} resident cost decrease.</div></div>
+              <div class="benefit-card"><div class="metric-label">Annual savings per resident</div><div class="benefit-value">${currency.format(annualResidentSavingsPerResident)} / ${percent.format(residentSavingsPercent)}</div><div class="benefit-copy">Each participating resident saves this amount annually when moving from $51 to $40 per month, a ${percent.format(residentSavingsPercent)} decrease.</div></div>
+              <div class="benefit-card"><div class="metric-label">Annual NOI increase</div><div class="benefit-value">+${currency.format(annualNoiIncrease)} / +${percent.format(retainedRevenueIncreasePercent)}</div><div class="benefit-copy">Modeled annual NOI increases from ${currency.format(currentAnnualNoi)} to ${currency.format(modeledAnnualNoi)}, a ${percent.format(retainedRevenueIncreasePercent)} increase.</div></div>
             </div>
           </div>
           <div class="grid-2">
             ${card('CaptivePro planning path', `<div class="stack-lg"><div>Rise48 does not need to move directly into a single parent captive on day one. LeaseGuard can first deploy DepositPro under the standard structure while Rise48 develops credible program performance and historical loss data.</div><div>After one to two years, or sooner if the data supports it, Rise48 can evaluate a CaptivePro transition with clearer visibility into upfront capital requirements, expected revenue, loss assumptions, and downside risk.</div></div>`)}
             ${card('Tiered coverage flexibility', `<div class="stack-lg"><div>Rise48 can maintain the current flat $1,250 coverage amount across participating residents or create tiered coverage amounts based on screening outcomes.</div><div>For example, residents who qualify but present more risk can be offered a higher coverage tier through DepositPro or can choose to provide a higher traditional cash security deposit.</div></div>`)}
+          </div>
+          <div class="grid-2">
+            ${card('Why this matters for Rise48 Equity', `<div class="stack-lg"><div>Rise48 Equity owns and operates 11,500 market-rate multifamily units across 56 communities in Arizona, North Carolina, and Texas. Because Rise48 is both the owner and operator, DepositPro can be evaluated as a resident affordability tool, an operational replacement for LeaseLock, and a direct recurring revenue opportunity.</div><div>Rise48 is currently offering a flat $1,250 LeaseLock coverage amount at a $49 monthly cost, with a $2 markup retained by Rise48, bringing the resident monthly cost to $51. DepositPro can model the same $1,250 coverage amount at an estimated $30 monthly LeaseGuard rate, creating $11 in monthly resident savings, a ${percent.format(residentSavingsPercent)} decrease, while increasing Rise48’s retained monthly revenue from $2 to $10 per participating unit, a ${percent.format(retainedRevenueIncreasePercent)} increase.</div><div>At 52% adoption, the modeled structure creates ${currency.format(annualResidentSavings)} in annual resident savings, a ${percent.format(residentSavingsPercent)} resident cost decrease, and increases modeled annual NOI by ${currency.format(annualNoiIncrease)}, a ${percent.format(retainedRevenueIncreasePercent)} increase, before any future CaptivePro upside. LeaseGuard also has an active Entrata integration path, which helps support implementation, reporting, coverage placement, invoicing, and ongoing portfolio administration through a more scalable operating process.</div></div>`) }
+            <div class="card" style="background:linear-gradient(180deg, rgba(244,194,28,0.18), rgba(255,255,255,0.04));"><h3 class="card-title">How DepositPro is different</h3><div style="margin-top:14px;">${bulletList([
+              'Once a partnership is agreed upon, all residents of Rise48 Equity qualify to opt into DepositPro. LeaseGuard underwrites Rise48 at the portfolio level instead of underwriting each resident individually.',
+              'Rise48 can keep a flat $1,250 coverage structure or use tiered coverage amounts based on resident screening outcomes, including coverage options up to 2x monthly rent.',
+              'Leasing teams can offer DepositPro as a lower-friction move-in option while maintaining a traditional cash security deposit option for residents who do not elect the waiver.',
+              'The structure supports a future CaptivePro path by allowing Rise48 to build performance and loss history before deciding whether to assume more risk in a single parent captive.',
+              'Dedicated claims handling support and portfolio-level reporting help create a cleaner operating process than managing deposit waivers community by community.'
+            ])}</div></div>
           </div>`;
       }
+
 
       function renderFunction() {
         document.getElementById('function').innerHTML = `
@@ -835,7 +847,7 @@
             ])}</div>
             <div class="grid-2">${metricCard('Cash deposit requirement', '$1,250', 'Traditional deposit obligation under the lease.')}${metricCard('LeaseGuard rate', '$30 / month', 'Insurance cost per covered unit at $1,250 of coverage.')}${metricCard('Community admin fee', '$10 / month', 'Monthly administration fee retained by Rise48.')}${metricCard('Resident waiver fee', '$40 / month', 'Non-refundable monthly fee paid by the resident instead of bringing the full cash deposit upfront.')}</div>
           </div>
-          <div class="cta-card"><h3 class="card-title">Why this resonates with residents and operators</h3><p class="muted" style="margin-top:14px;">The resident keeps $1,250 available at move-in instead of tying it up in a traditional deposit, while Rise48 gains an insurance-backed replacement structure that can reduce deposit-related friction, support move-in affordability, and increase retained monthly revenue per participating unit.</p></div>`;
+          <div class="cta-card"><h3 class="card-title">Why this resonates with residents and operators</h3><p class="muted" style="margin-top:14px;">The resident keeps $1,250 available at move-in instead of tying it up in a traditional deposit, while Rise48 gains an insurance-backed replacement structure that can reduce deposit-related friction, support move-in affordability, and increase retained monthly revenue per participating unit from $2 to $10, an $8 monthly increase and 400% revenue increase.</p></div>`;
       }
 
       function renderForecast() {
